@@ -1,0 +1,30 @@
+version: '3.8'
+
+services:
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: cyclonefusion-backend
+    ports:
+      - "8000:8000"
+    environment:
+      - ENVIRONMENT=demo
+      - DEMO_MODE=True
+      - SECRET_KEY=cyclonefusion-sih2026-super-secret-key-change-in-production-min32char
+      - DATABASE_URL=sqlite:///./cyclonefusion.db
+    volumes:
+      - ./backend/uploads:/app/uploads
+      - ./backend/cyclonefusion.db:/app/cyclonefusion.db
+    restart: unless-stopped
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: cyclonefusion-frontend
+    ports:
+      - "3000:80"
+    depends_on:
+      - backend
+    restart: unless-stopped
